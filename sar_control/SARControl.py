@@ -1,26 +1,29 @@
 import paramiko
-from parser.sar import SarXmlParser
+#from parser.sar import SarXmlParser
 
 class SARControl:
-    def __init__(self, host=None, port=None, user=None, passwd=None):
+    def __init__(self, host=None, port=None, user=None, passwd=None, ):
         self.sar_binary_path = None
         self.host = host
         self.port = port
         self.user = user
         self.passwd = passwd
-        pass
-
+        self.client = paramiko.SSHClient()
     def connect(self):
-        client = paramiko.SSHClient()
-        client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        client.connect(hostname=self.host, port=self.port, username=self.user)
-        stdin, stdout, stderr = client.exec_command('ls -l')
-        data = stdout.read() + stderr.read()
-        client.close()
-        pass  # Connect to server via ssh
+        self.client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        self.client.connect(hostname=self.host, port=self.port, username=self.user, password=self.passwd)
+        #return ssh
+        # stdin, stdout, stderr = client.exec_command('ls -l')
+        # data = stdout.read() + stderr.read()
+        # print(data)
+        # client.close()  # Connect to server via ssh
 
-    def upload_sar(self, path_from: str, path_to:str):
-        pass  # Загрузка бинарников из path_from на локальной тачке на удаленную тачку по пути path_to по уже установленному коннекту
+    def upload_sar(self, path_from=None, path_to=None): #Загрузка бинарников из path_from на локальной тачке на удаленную тачку по пути path_to по уже установленному коннекту
+        output = self.client.exec_command('echo $HOME')
+        print(output[1].read())
+        transfer = self.client.open_sftp()
+        transfer.put(path_from, path_to)
+        transfer.close()
 
     def start_sar(self, path: str):
         pass  # Запуска САРа на удаленной тачке и сохранение результатов в path (на удаленной тачке)
@@ -49,8 +52,9 @@ class SARControl:
 
 
 if __name__ == '__main__':
-    sar = SARControl(host='192.168.78.117', port=22, user='root')
+    sar = SARControl(host='192.168.126.133', port=22, user='root', passwd='root')
     sar.connect()
+    sar.upload_sar('/home/greg/Programs/SAR.tar.xz', '/root/SAR.tar.xz')
     # .....)
     # data = sar.parse_sar_data()
     # StanGraph.plot(data)
