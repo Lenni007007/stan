@@ -13,7 +13,7 @@ class PlotlyGraph:
                                      'rgb(198, 89, 17)',
                                      'rgb(51, 63, 79)',
                                      'rgb(110, 65, 143)',
-                                     'rgb(165, 27, 27)'])
+                                     'rgb(165, 27, 27)']) # TODO possible crash if there are more then 6 scatters
 
         self.data = []
         self.layout = Layout(title=graph_title, separators=', ')

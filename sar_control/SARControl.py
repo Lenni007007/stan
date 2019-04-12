@@ -41,6 +41,6 @@ class SARControl:
 if __name__ == '__main__':
     sar = SARControl()
     sar.connect()
-    .....
+    .....)
     data = sar.parse_sar_data()
     StanGraph.plot(data)
