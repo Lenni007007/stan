@@ -1,12 +1,22 @@
+import paramiko
 from parser.sar import SarXmlParser
 
 class SARControl:
-    def __init__(self, host: str, port: int, login: str, passwd:str):
+    def __init__(self, host=None, port=None, user=None, passwd=None):
         self.sar_binary_path = None
         self.host = host
+        self.port = port
+        self.user = user
+        self.passwd = passwd
         pass
 
     def connect(self):
+        client = paramiko.SSHClient()
+        client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        client.connect(hostname=self.host, port=self.port, username=self.user)
+        stdin, stdout, stderr = client.exec_command('ls -l')
+        data = stdout.read() + stderr.read()
+        client.close()
         pass  # Connect to server via ssh
 
     def upload_sar(self, path_from: str, path_to:str):
@@ -32,15 +42,15 @@ class SARControl:
         self.upload_sar(self.sar_path)
         self.start_sar(path_to_save)
 
-    def parse_sar_data(self):
-        parser = SarXmlParser()
-        parser.parse(path)
-        return parser.get_stat()
+    # def parse_sar_data(self):
+    #     parser = SarXmlParser()
+    #     parser.parse()
+    #     return parser.get_stat()
 
 
 if __name__ == '__main__':
-    sar = SARControl()
+    sar = SARControl(host='192.168.78.117', port=22, user='root')
     sar.connect()
-    .....)
-    data = sar.parse_sar_data()
-    StanGraph.plot(data)
+    # .....)
+    # data = sar.parse_sar_data()
+    # StanGraph.plot(data)
